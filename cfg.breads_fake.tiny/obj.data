@@ -1,0 +1,5 @@
+classes= 8
+train  = /home/xuan/pos_bread/cfg.breads_fake.tiny/train.txt
+valid  = /home/xuan/pos_bread/cfg.breads_fake.tiny/test.txt
+names = /home/xuan/pos_bread/cfg.breads_fake.tiny/obj.names
+backup = /home/xuan/pos_bread/cfg.breads_fake.tiny/weights/
