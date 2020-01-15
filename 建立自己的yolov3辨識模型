@@ -18,6 +18,8 @@ https://pjreddie.com/darknet/install/
 YOLOv3訓練時輸出參數意義：
 https://www.twblogs.net/a/5cae10d4bd9eee0440518b1c
 
+yoloOpencv.py:
+  $ wget https://github.com/ch-tseng/traffic/blob/master/yoloOpencv.py
 
 
 
