@@ -15,11 +15,18 @@ https://pjreddie.com/darknet/yolo/
 Darknet：
 https://pjreddie.com/darknet/install/
 
+YOLOv1~YOLOv3 cfg檔學習參數說明
+https://medium.com/@chih.sheng.huang821/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-%E7%89%A9%E4%BB%B6%E5%81%B5%E6%B8%ACyolov1-yolov2%E5%92%8Cyolov3-cfg-%E6%AA%94%E8%A7%A3%E8%AE%80-75793cd61a01
+
 YOLOv3訓練時輸出參數意義：
 https://www.twblogs.net/a/5cae10d4bd9eee0440518b1c
 
 yoloOpencv.py:
   $ wget https://github.com/ch-tseng/traffic/blob/master/yoloOpencv.py
+
+The NVIDIA container image of TensorFlow, release 18.04, is available.(docker環境)
+https://docs.nvidia.com/deeplearning/frameworks/tensorflow-release-notes/rel_18.04.html#rel_18.04
+
 
 
 
@@ -468,3 +475,8 @@ YOLO在訓練過程中每訓練100 batches便會寫入一個新的weights檔到�
 
   $./darknet/darknet detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/weights/yolov3-tiny_100000.weights/home/xuan/pos_bread/breads_modle/959d9920b93a95e9-photo-full.jpg {要測試的相片路徑}
 
+
+
+
+
+完成啦～
