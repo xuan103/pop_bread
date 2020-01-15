@@ -363,17 +363,106 @@ Tiny YOLO只有兩個detector，因此要修改兩組。
 
 
 
-九）開始訓練取得weights file
+九）下載預訓練檔
 
--下載YOLOV3-Tiny weights for CoCo dataset：        
+-可同時用於訓練YOLO及Tiny YOLO
+  $ wget https://pjreddie.com/media/files/darknet53.conv.74
 
-  $ wget https://pjreddie.com/media/files/yolov3-tiny.weights
+-Imagent＋COCO datasets所訓練的yolov3.weights
+  $ wget https://pjreddie.com/media/files/yolov3.weights
   
-取yolov3-tiny.weights的前15 layers來產生預訓練檔：
+-YOLOV3-Tiny weights for CoCo dataset        
+  $ wget https://pjreddie.com/media/files/yolov3-tiny.weights
 
-./darknet partial cfg / yolov3-tiny.cfg yolov3-tiny.weights yolov3-tiny.conv.15 15
+以上選擇其一即可。
 
-執行darknet開始訓練：
-darknet/darknet detector train cfg.breads_fake /yolov3-tiny.cfg yolov3-tiny.conv.15
 
+執行darknet command開始訓練：(根據上面選擇的預訓練檔開始訓練，這邊使用yolov3-tiny.weights)
+
+  $ ./darknet/darknet detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/yolov3-tiny.cfg yolov3-tiny.weights
+
+
+訓練過程會持續的秀出各種數值，並且每隔100batches會寫出一個weights檔。其log說明如下：
+
+Region 16 Avg IOU: 0.211202, Class: 0.617162, Obj: 0.608671, No Obj: 0.523450, .5R: 0.096774, .75R: 0.000000,  count: 31
+Region 23 Avg IOU: 0.205995, Class: 0.557535, Obj: 0.731852, No Obj: 0.513294, .5R: 0.000000, .75R: 0.000000,  count: 3
+Region 16 Avg IOU: 0.207260, Class: 0.436498, Obj: 0.581735, No Obj: 0.528912, .5R: 0.115385, .75R: 0.000000,  count: 26
+Region 23 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.511749, .5R: -nan, .75R: -nan,  count: 0
+Region 16 Avg IOU: 0.288886, Class: 0.573402, Obj: 0.585292, No Obj: 0.528647, .5R: 0.235294, .75R: 0.000000,  count: 34
+Region 23 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.512652, .5R: -nan, .75R: -nan,  count: 0
+Region 16 Avg IOU: 0.158324, Class: 0.357699, Obj: 0.579055, No Obj: 0.528615, .5R: 0.000000, .75R: 0.000000,  count: 25
+Region 23 Avg IOU: 0.106340, Class: 0.495907, Obj: 0.520033, No Obj: 0.510779, .5R: 0.000000, .75R: 0.000000,  count: 15
+Region 16 Avg IOU: 0.501750, Class: 0.474676, Obj: 0.587512, No Obj: 0.531241, .5R: 0.541667, .75R: 0.000000,  count: 24
+Region 23 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.509655, .5R: -nan, .75R: -nan,  count: 0
+Region 16 Avg IOU: 0.164135, Class: 0.507195, Obj: 0.603655, No Obj: 0.532542, .5R: 0.000000, .75R: 0.000000,  count: 40
+Region 23 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.510121, .5R: -nan, .75R: -nan,  count: 0
+Region 16 Avg IOU: 0.456671, Class: 0.502168, Obj: 0.716634, No Obj: 0.527527, .5R: 0.500000, .75R: 0.166667,  count: 18
+Region 23 Avg IOU: 0.010142, Class: 0.666322, Obj: 0.356702, No Obj: 0.511611, .5R: 0.000000, .75R: 0.000000,  count: 9
+Region 16 Avg IOU: 0.039742, Class: 0.425079, Obj: 0.824324, No Obj: 0.532536, .5R: 0.000000, .75R: 0.000000,  count: 15
+Region 23 Avg IOU: 0.125563, Class: 0.637127, Obj: 0.420478, No Obj: 0.513307, .5R: 0.000000, .75R: 0.000000,  count: 15
+1: 410.825806, 410.825806 avg, 0.000000 rate, 72.075699 seconds, 24 images
+Loaded: 0.000044 seconds
+
+
+上面log中：
+
+Region 16, Region 23, 表示不同尺度（16，23）上預測到的不同大小的參數。
+16 卷積層爲最大的預測尺度, 使用較大的 mask, 但是可以預測出較小的物體;
+23卷積層爲最小的預測尺度, 使用較小的 mask, 可以預測出較大的物體.
+
+表示所有訓練圖片中的一個批次（batch）,批次大小的劃分根據在 cfg.breads_fake.tiny/yolov3-voc.cfg中設定的， 
+批次大小的劃分根據我們在 .cfg 文件中設置的subdivisions參數。
+在我使用的 .cfg 文件中 batch = 64 ，subdivision = 8，所以在訓練輸出中，
+訓練迭代包含了8組（8組Region 16, Region 23），每組又包含了8張圖片，跟設定的batch和subdivision的值一致。
+注： 也就是說每輪迭代會從所有訓練集裏隨機抽取 batch = 24 個樣本參與訓練，
+所有這些 batch 個樣本又被均分爲 subdivision = 8 次送入網絡參與訓練，以減輕內存佔用的壓力）
+
+
+批輸出：
+
+    1： 指示當前訓練的迭代次數
+    410.825806： 是總體的Loss(損失）
+    410.825806 avg： 是平均Loss，這個數值應該越低越好，一般來說，一旦這個數值低於0.060730 avg就可以終止訓練了。
+    0.000000 rate： 代表當前的學習率，是在.cfg文件中定義的。
+    72.075699 seconds： 表示當前批次訓練花費的總時間。
+    24 images： 這一行最後的這個數值是9798*64的大小，表示到目前爲止，參與訓練的圖片的總量。
+
+
+分塊輸出：
+
+    Region xx Avg IOU: 0.125563： 
+      表示在當前subdivision內的圖片的平均IOU，代表預測的矩形框和真實目標的交集與並集之比，這裏是12.56%，這個模型需要進一步的訓練。
+    
+    Class: 0.637127： 
+      標註物體分類的正確率，期望該值趨近於1。
+    
+    Obj: 0.420478： 
+      越接近1越好。
+    
+    No Obj: 0.513307： 
+      期望該值越來越小，但不爲零。
+      
+    count: 15：
+      count後的值是所有的當前subdivision圖片中包含正樣本的圖片的數量。
+
+    ** IOU（Intersection over Union，也被稱爲交併集之比）
+
+
+一般來說，最需要注意的是average loss error，如果訓練的圖片數目有數千個以上，那麼average loss error約0.06左右便可手動停止了，
+如果僅有數百張，那麼大約0.6左右便可先試著載入其weights檔測試看看辨識效果是否滿意。
+
+YOLO在訓練過程中每訓練100 batches便會寫入一個新的weights檔到目錄中，我們可以隨時取用以檢視目前的訓練成果。
+
+
+
+
+
+
+十）檢視訓練成果
+
+找一張圖片，然後使用下列的Darknet command來測試。
+
+  $./darknet/darknet detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/weights/yolov3-tiny_100000.weights {要測試的相片路徑}
+
+  $./darknet/darknet detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/weights/yolov3-tiny_100000.weights/home/xuan/pos_bread/breads_modle/959d9920b93a95e9-photo-full.jpg {要測試的相片路徑}
 
