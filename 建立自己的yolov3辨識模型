@@ -429,30 +429,54 @@ Region 16, Region 23, 表示不同尺度（16，23）上預測到的不同大小
 
 批輸出：
 
-    1： 指示當前訓練的迭代次數
-    410.825806： 是總體的Loss(損失）
-    410.825806 avg： 是平均Loss，這個數值應該越低越好，一般來說，一旦這個數值低於0.060730 avg就可以終止訓練了。
-    0.000000 rate： 代表當前的學習率，是在.cfg文件中定義的。
-    72.075699 seconds： 表示當前批次訓練花費的總時間。
-    24 images： 這一行最後的這個數值是9798*64的大小，表示到目前爲止，參與訓練的圖片的總量。
+  1: 410.825806, 410.825806 avg, 0.000000 rate, 72.075699 seconds, 24 images
+  
+    1： 
+      指示當前訓練的迭代次數
+      
+    410.825806：
+      是總體的Loss(損失）
+    
+    410.825806 avg：
+      是平均Loss，這個數值應該越低越好，一般來說，一旦這個數值低於0.060730 avg就可以終止訓練了。
+    
+    0.000000 rate：
+      代表當前的學習率，是在.cfg文件中定義的。
+    
+    72.075699 seconds：
+      表示當前批次訓練花費的總時間。
+    
+    24 images：
+      這一行最後的這個數值是1*24的大小，表示到目前爲止，參與訓練的圖片的總量。
 
 
 分塊輸出：
 
-    Region xx Avg IOU: 0.125563： 
-      表示在當前subdivision內的圖片的平均IOU，代表預測的矩形框和真實目標的交集與並集之比，這裏是12.56%，這個模型需要進一步的訓練。
+  Region 23 Avg IOU: 0.125563, Class: 0.637127, Obj: 0.420478, No Obj: 0.513307, .5R: 0.000000, .75R: 0.000000,  count: 15
+
+    Region xx ：
+      表示cfg文件中golo-layer的索引
+    
+    Avg IOU: 0.125563： 
+      表示在當前subdivision內的圖片的平均IOU，代表預測的矩形框和真實目標的交集與並集之比，這裏是12.56%，這個模型需要進一步的訓練
     
     Class: 0.637127： 
-      標註物體分類的正確率，期望該值趨近於1。
+      標註物體分類的正確率，期望該值趨近於1
     
     Obj: 0.420478： 
-      越接近1越好。
+      越接近1越好
     
-    No Obj: 0.513307： 
-      期望該值越來越小，但不爲零。
-      
+    No Obj: 0.513307：
+      期望該值越來越小，但不爲零
+    
+    .5R  
+      以IOU = 0.5為閾值時候的recall
+    
+    .75R
+      以IOU = 0.75為閾值時候的recall
+    
     count: 15：
-      count後的值是所有的當前subdivision圖片中包含正樣本的圖片的數量。
+      count後的值是所有的當前subdivision圖片中包含正樣本的圖片的數量
 
     ** IOU（Intersection over Union，也被稱爲交併集之比）
 
@@ -469,11 +493,9 @@ YOLO在訓練過程中每訓練100 batches便會寫入一個新的weights檔到�
 
 十）檢視訓練成果
 
-找一張圖片，然後使用下列的Darknet command來測試。
+找一張圖片，然後使用下列的Darknet command來測試。（權重後面放修改成要測試的相片路徑，僅供參考）
 
-  $./darknet/darknet detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/weights/yolov3-tiny_100000.weights {要測試的相片路徑}
-
-  $./darknet/darknet detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/weights/yolov3-tiny_100000.weights/home/xuan/pos_bread/breads_modle/959d9920b93a95e9-photo-full.jpg {要測試的相片路徑}
+  $./darknet/darknet detector cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/weights/yolov3-tiny_100000.weights /home/xuan/pos_bread/breads_modle/959d9920b93a95e9-photo-full.jpg
 
 
 
