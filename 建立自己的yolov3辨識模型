@@ -1,12 +1,33 @@
-#建立自己的yolov3辨識模型
+建立自己的yolov3辨識模型
+
+目錄：
+
+參考資料
+步驟 01. 所需準備
+步驟 02. 製作 training dataset
+步驟 03. label 相片及轉換為 YOLO dataset
+步驟 04. 驗証 label 是否正確
+步驟 05. 轉換為 YOLO Dataset
+步驟 06. 切分 train 及 test dataset 
+步驟 07. 建立 obj.names 及 obj.data 
+步驟 08. 修改 yolov3-tiny.cfg 或 yolov3.cfg
+步驟 09. 下載預訓練檔  
+         YOLOv3訓練時輸出參數意義(log 說明,批輸出,分塊輸出)   
+步驟 10. 檢視訓練成果  
+# python3 dmesg image 
+# dmesg 
 
 
--參考:
 
-DIY – 電腦視覺的POS結帳台：
+
+
+
+# 參考資料 :
+
+DIY – 電腦視覺的 POS 結帳台：
 https://chtseng.wordpress.com/2019/01/25/%E7%89%A9%E4%BB%B6%E5%81%B5%E6%B8%AC%E7%9A%84%E6%87%89%E7%94%A8-diy%E9%9B%BB%E8%85%A6%E8%A6%96%E8%A6%BApos%E7%B5%90%E5%B8%B3%E5%8F%B0/
 
-建立自己的YOLO辨識模型 – 以柑橘辨識為例：
+建立自己的 YOLO 辨識模型 – 以柑橘辨識為例：
 https://blog.cavedu.com/2019/07/25/%E5%BB%BA%E7%AB%8B%E8%87%AA%E5%B7%B1%E7%9A%84yolo%E8%BE%A8%E8%AD%98%E6%A8%A1%E5%9E%8B-%E4%BB%A5%E6%9F%91%E6%A9%98%E8%BE%A8%E8%AD%98%E7%82%BA%E4%BE%8B/
 
 YOLO：
@@ -14,17 +35,20 @@ https://pjreddie.com/darknet/yolo/
 
 Darknet：
 https://pjreddie.com/darknet/install/
+$ git clone https://github.com/pjreddie/darknet.git
+	$ cd darknet
+	$ make
 
-YOLOv1~YOLOv3 cfg檔學習參數說明
+YOLOv1~YOLOv3 cfg 檔學習參數說明
 https://medium.com/@chih.sheng.huang821/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-%E7%89%A9%E4%BB%B6%E5%81%B5%E6%B8%ACyolov1-yolov2%E5%92%8Cyolov3-cfg-%E6%AA%94%E8%A7%A3%E8%AE%80-75793cd61a01
 
-YOLOv3訓練時輸出參數意義：
+YOLOv3 訓練時輸出參數意義：
 https://www.twblogs.net/a/5cae10d4bd9eee0440518b1c
 
 yoloOpencv.py:
-  $ wget https://github.com/ch-tseng/traffic/blob/master/yoloOpencv.py
+ 	$ wget https://github.com/ch-tseng/traffic/blob/master/yoloOpencv.py
 
-The NVIDIA container image of TensorFlow, release 18.04, is available.(docker環境)
+The NVIDIA container image of TensorFlow, release 18.04, is available.  ( docker 環境)
 https://docs.nvidia.com/deeplearning/frameworks/tensorflow-release-notes/rel_18.04.html#rel_18.04
 
 
@@ -32,79 +56,78 @@ https://docs.nvidia.com/deeplearning/frameworks/tensorflow-release-notes/rel_18.
 
 
 
-##以下為步驟：
+## 以下為步驟：
 
 一）所需準備
 
--建立資料夾（僅供參考）
+建立資料夾（僅供參考）
 
-  "pos_bread"：
-      為主folder
+  "bread_test"：
+ 為主folder
 
-  "breads_modle"：
-      在"pos_bread"裡新增，為圖片儲存的folder
+  "bread"：
+在"bread_test"裡新增，為圖片儲存的 folder
 
-  "xmlfile"：
-      在"pos_bread"裡新增，為label框選作業後儲存的folder
+  "xml"：
+在"bread_test"裡新增，為 label 框選作業後儲存的 folder
 
-  "txt"
-      在"pos_bread"裡新增，為dataset送交訓練後的folder
+  "txt"：
+在"bread_test"裡新增，為 dataset 送交訓練後的 folder
 
-  "yolo"
-      在"pos_bread"裡新增，為轉換後儲存的Label檔及圖片檔的folder
+  "yolo"：
+在"bread_test"裡新增，為轉換後儲存的 Label 檔及圖片檔的 folder
 
-  "cfg.breads_fake.tiny"
-      在"pos_bread"裡新增，為放置YOLO的設定檔
+  "cfg.bread"：
+在"bread"裡新增，為放置 YOLO 的設定檔
 
 
--多種麵包模型（僅供參考）
+多種麵包模型（僅供參考）
 
   "單片土司"
-  "雙片土司"
   "牛角麵包"
-  "奶油牛奶條"
   "紅豆麵包"
   "炸甜甜圈"
   "牛肉漢堡"
-  "瑞士捲"
 
 
 
 
 
 
-二）製作training dataset
+二）製作 training dataset
 
--拍攝麵包圖片
-
-
+拍攝麵包圖片
 
 
 
 
-三）label相片及轉換為YOLO dataset
 
--拍攝好的圖片後，接著進行label框選作業，這邊使用labelImg這個tool，label格式為PscalVOC
 
--參考：https://github.com/tzutalin/labelImg
 
---先下載labelImg這個tool
+三）label 相片及轉換為 YOLO dataset
 
-在網站裡找到安裝方法後，使用Terminal install，這裡是使用以下方式安裝（僅供參考）
+-拍攝好的圖片後，接著進行 label 框選作業，這邊使用 labelImg 這個 tool，label 格式為 PscalVOC
+
+參考：https://github.com/tzutalin/labelImg
+
+先下載 labelImg 這個 tool
+在網站裡找到安裝方法後，使用 Terminal install，這裡是使用以下方式安裝（僅供參考）
 
     $ pip3 install labelImg
     $ labelImg
 
---安裝後開始進行label框選作業。
+安裝後開始進行 label 框選作業
 
-剛執行時畫面是空的，請按「Open Dir」、「Change Save Dir」選擇剛剛建立的images以及labels資料夾，
-接下來便可從下窗格中選擇要label的相片，「按下Create RectBox」便可開始label。
 
-  「Open Dir」路徑為：/home/xuan/pos_bread/breads_modle/
-  「Change Save Dir」路徑為：/home/xuan/pos_bread/xmlfile/
+
+剛執行時畫面是空的，請按「Open Dir」、「Change Save Dir」選擇剛剛建立的 images 以及 labels 資料夾，
+接下來便可從下窗格中選擇要 label 的相片，「按下Create RectBox」便可開始 label 
+
+  「Open Dir」路徑為：/home/xuan/bread_test/bread/
+  「Change Save Dir」路徑為：/home/xuan/bread_test/xml/
   「label格式」為：PscalVOC
 
-框選完所有的相片之後，breads_modle及xmlfile的資料夾下應會分別有相同數目的image檔及xml的label檔。
+框選完所有的相片之後， breads_modle 及 xmlfile 的資料夾下應會分別有相同數目的 image 檔及 xml 的 label 檔。
 
 
 
@@ -113,78 +136,79 @@ https://docs.nvidia.com/deeplearning/frameworks/tensorflow-release-notes/rel_18.
 
 四）驗証label是否正確
 
--耐心將所有相片label完畢後，需要驗証是否label正確，確認無誤後，才能將正確的dataset送交訓練
+耐心將所有相片 label 完畢後，需要驗証是否 label 正確，確認無誤後，才能將正確的 dataset 送交訓練
 
--python：
+python：
 
   $ wget https://raw.githubusercontent.com/ch-tseng/mytools/master/voc_dataset/extract_all_labels_to_imgs.py
 
---參數：（以下為修改 extract_all_labels_to_imgs.py 的地方，僅供參考）
+參數：（以下為修改 extract_all_labels_to_imgs.py 的地方，僅供參考）
 
-"txt/"為dataset送交訓練後的folder。label定義名稱將為分類後的目錄folder
+"txt/"為 dataset 送交訓練後的 folder。label 定義名稱將為分類後的目錄folder
   
   extract_to = "txt/" 
 
-上步驟產生的VOC dataset的images及labels path
+上步驟產生的 VOC dataset 的 images 及 labels path
   
-  ataset_images = "/home/xuan/pos_bread/breads_modle/"
-  dataset_labels = "/home/xuan/pos_bread/xmlfile/"
-  
-"xmlfile"：為label框選作業後儲存的folder
-  
-  xmlfile = "/home/xuan/pos_bread/xmlfile"
-  
-"breads_modle"為圖片儲存的folder
+  ataset_images = "/home/xuan/bread_test/bread/"
+  dataset_labels = "/home/xuan/bread_test/xml/"
+ 
+"breads_modle"為圖片儲存的 folder
 
-  imagefile = "/home/xuan/pos_bread/breads_modle/"
+  imagefile = "/home/xuan/bread_test/bread/"
 
-此為告知在windows及ubuntu環境下folder路徑的不同
+"xmlfile"：為 label 框選作業後儲存的 folder
+  
+  xmlfile = "/home/xuan/bread_test/xml"
+
+此為告知在 windows 及 ubuntu 環境下 folder 路徑的不同
 
   folderCharacter = "/"  # \\ is for windows
 
--執行：
+執行：
     
-    $ python3 extract_all_labels_to_imgs.py
+   $ python3 extract_all_labels_to_imgs.py
 
-該程式會將所有的label匯出成圖片，依其label名稱放置於同名的folder中，其檔名為該label所在的圖片，
-所以如果有看到圖片放置於錯誤的目錄，便可找到其對應的圖片加以修正。
-
+該程式會將所有的 label 匯出成圖片，依其 label 名稱放置於同名的 folder中，其檔名為該 label 所在的圖片，所以如果有看到圖片放置於錯誤的目錄，便可找到其對應的圖片加以修正。
 
 
 
 
 
-五）轉換為YOLO Dataset
 
--用於training的dataset驗証無誤後，接著將此dataset轉為YOLO需要的格式。
+五）轉換為 YOLO Dataset
 
--python：
+用於 training 的 dataset 驗証無誤後，接著將此 dataset 轉為 YOLO 需要的格式。
+
+python：
 
   $ wget https://raw.githubusercontent.com/ch-tseng/makeYOLOv3/master/1_labels_to_yolo_format.py
 
---參數：（以下為修改 1_labels_to_yolo_format.py 的地方，僅供參考）
+參數：（以下為修改 1_labels_to_yolo_format.py 的地方，僅供參考）
 
-此為告知在windows及ubuntu環境下folder路徑的不同
+此為告知在 windows 及 ubuntu 環境下 folder 路徑的不同
   
   folderCharacter = "/"  # \\ is for windows
 
-"xmlfile"：為label框選作業後儲存的folder
+"xmlfile"：為 label 框選作業後儲存的 folder
 
-  xmlFolder = "/home/xuan/pos_bread/xmlfile/"
+  xmlFolder = "/home/xuan/bread_test/xml/"
 
-"breads_modle"為圖片儲存的folder
+"breads_modle"為圖片儲存的 folder
 
-  imgFolder = "/home/xuan/pos_bread/breads_modle/"
+  imgFolder = "/home/xuan/bread_test/bread"
 
-negative images（無任何label）的image path
+"negative images"（無任何 label ）的 image path
 
-  negFolder = ""
+  negFolder = "/home/xuan/bread_test/neg"
 
-"yolo"為轉換後儲存的Label檔及圖片檔的folder
+"yolo"為轉換後儲存的 Label 檔及圖片檔的 folder
 
   saveYoloPath = "/home/xuan/pos_bread/yolo"
 
-所有的label及ID代號
+
+
+所有的 label 及 ID 代號
 
   classList = { "b01":1, "b02":2, "b03":3,"b04":4, "b05":5, "b06":6, "b07":7, "b08":8 }
 
@@ -192,180 +216,163 @@ negative images（無任何label）的image path
 
     $ python3 1_labels_to_yolo_format.py
 
-在指定輸出的YOLO path下便可看到所有images以及轉換後的label定義檔。
+在指定輸出的 YOLO path 下便可看到所有 images 以及轉換後的 label 定義檔。
 
 
 
 
 
 
-六）切分train及test dataset
+六）切分 train 及 test dataset
 
--在進行訓練前，需要將所有images區分為train及test dataset，並分別條列於train.txt及test.txt。
+在進行訓練前，需要將所有 images 區分為 train 及 test dataset ，並分別條列於 train.txt 及 test.txt。
 
--python：
+python：
 
   $ wget https://raw.githubusercontent.com/ch-tseng/makeYOLOv3/master/2_split_train_test.py
 
---參數：（以下為修改 python3 2_split_train_test.py 的地方，僅供參考）
+參數：（以下為修改 python3 2_split_train_test.py 的地方，僅供參考）
 
 test dataset所佔的比例
 
   testRatio = 0.2
 
-"breads_modle"為圖片儲存的folder
+"breads_modle"為圖片儲存的 folder
 
-  imageFolder = "/home/xuan/pos_bread/breads_modle/"
+  imageFolder = "/home/xuan/bread_test/bread/"
 
-"cfg.breads_fake.tiny"為放置YOLO的設定檔，稍後將用於training
+"cfg.breads_fake.tiny"為放置 YOLO 的設定檔，稍後將用於 training
 
-  cfgFolder = "/home/xuan/pos_bread/cfg.breads_fake.tiny"
+  cfgFolder = "/home/xuan/bread_test/cfg.bread"
 
-此為告知在windows及ubuntu環境下folder路徑的不同
+此為告知在 windows 及 ubuntu 環境下 folder 路徑的不同
 
   folderCharacter = "/"  # \\ is for windows
 
-執行：(會產生test.txt及train.txt兩支檔案。)
+執行：(會產生 test.txt 及 train.txt 兩支檔案。)
 
     $ python3 python3 2_split_train_test.py
 
 
-test.txt folder內容：
-（所有images檔案名稱列表中的20%（或其它比例，可視需求變更），訓練時YOLO會依次讀取該檔內容取出相片進行validation
+test.txt folder 內容：
+（所有 images 檔案名稱列表中的 20%（或其它比例，可視需求變更），訓練時 YOLO 會依次讀取該檔內容取出相片進行 validation
   您可以手動或寫程式取出固定比例的列表放置於此檔案內容中。）
 
-/home/xuan/pos_bread/breads_modle/93a5d968a2b54dc4-photo-full.jpg
-/home/xuan/pos_bread/breads_modle/e911234a535c6395-photo-full.jpg
-/home/xuan/pos_bread/breads_modle/57b3add041cc95e5-photo-full.jpg
-/home/xuan/pos_bread/breads_modle/b8af29ac1b6a6225-photo-full.jpg
+/home/xuan/bread_test/yolo/IMG_4679.jpg
+/home/xuan/bread_test/yolo/IMG_4686.jpg
 ...
-/home/xuan/pos_bread/breads_modle/a18ea0a6bf9f41f7-photo.JPG
-/home/xuan/pos_bread/breads_modle/a4ba88ce053f88a7-photo-full.jpg
-/home/xuan/pos_bread/breads_modle/538a908ccd7bde52-photo-full.jpg
-/home/xuan/pos_bread/breads_modle/d0d1dbc2586d964e-photo-full.jpg
+/home/xuan/bread_test/yolo/IMG_4623.jpg
+/home/xuan/bread_test/yolo/IMG_4675.jpg
 
-train.txt folder內容：
-（所有images檔案名稱列表中的80%（或其它比例，可視需求變更），訓練時YOLO會依次讀取該檔內容取出相片進行訓練
+train.txt folder 內容：
+（所有 images 檔案名稱列表中的 80%（或其它比例，可視需求變更），訓練時 YOLO 會依次讀取該檔內容取出相片進行訓練
   您可以手動或寫程式取出固定比例的列表放置於此檔案內容中。）
 
-/home/xuan/pos_bread/breads_modle/IMG_3643.JPG
-/home/xuan/pos_bread/breads_modle/90ae32c1da524bf0-photo-full.jpg
-/home/xuan/pos_bread/breads_modle/959d9920b93a95e9-photo-full.jpg
+/home/xuan/bread_test/yolo/IMG_4676.jpg
+/home/xuan/bread_test/yolo/IMG_4648.jpg
 ...
-/home/xuan/pos_bread/breads_modle/c76e3877a8562df6-photo-full.jpg
-/home/xuan/pos_bread/breads_modle/ce9c84d77950e3cd-photo-full.jpg
-/home/xuan/pos_bread/breads_modle/78f6c3cf62a39886-photo-full.jpg 
+/home/xuan/bread_test/yolo/IMG_4631.jpg
+/home/xuan/bread_test/yolo/IMG_4706.jpg
 
 
 
 
 
 
-七）建立obj.names及obj.data
+七）建立 obj.names 及 obj.data
 
--obj.data定義了檔案的path，obj.names記載labels的名稱，是訓練YOLO時必要的檔案。
+obj.data 定義了檔案的 path，obj.names 記載 labels 的名稱，是訓練 YOLO時必要的檔案。
 
--python：
+python：
 
   $ wget https://raw.githubusercontent.com/ch-tseng/makeYOLOv3/master/3_make_cfg_file.py
 
 參數：（以下為修改 python3 3_make_cfg_file.py 的地方，僅供參考）
 
-label的數目
+label 的數目
 
-  classes = 8
+  classes = 5
 
 此為告知以下設定同 1_labels_to_yolo_format.py
 
   Same with you defined in 1_labels_to_yolo_format.py
 
-所有的label及ID代號
+所有的 label 及 ID 代號
 
-  classList = { "b01":1, "b02":2, "b03":3,"b04":4, "b05":5, "b06":6, "b07":7, "b08":8 }
+  classList = { "b01":1, "b02":2, "b03":3,"b04":4, "b05":5 }
 
-此為告知在windows及ubuntu環境下folder路徑的不同
+此為告知在 windows 及 ubuntu 環境下 folder 路徑的不同
 
   folderCharacter = "/"  # \\ is for windows
 
-"cfg.breads_fake.tiny"為放置YOLO的設定檔，稍後將用於training
+"cfg.breads_fake.tiny"為放置 YOLO 的設定檔，稍後將用於 training
 
-  cfgFolder = "/home/xuan/pos_bread/cfg.breads_fake.tiny"
+  cfgFolder = "/home/xuan/bread_test/cfg.bread"
 
-執行：（產生obj.data及obj.names文字檔）
+
+執行：（產生 obj.data 及 obj.names 文字檔）
 
     $ python3 3_make_cfg_file.py
 
+obj.data folder 內容：
+（定義 label 數目以及各個設定檔及 weights 目錄的 path，YOLO 訓練及預測時皆會讀取。）
 
-obj.data folder內容：
-（定義label數目以及各個設定檔及weights目錄的path，YOLO訓練及預測時皆會讀取。）
+ classes= 5
+train  = /home/xuan/bread_test/cfg.bread/train.txt
+valid  = /home/xuan/bread_test/cfg.bread/test.txt
+names = /home/xuan/bread_test/cfg.bread/obj.names
+backup = /home/xuan/bread_test/cfg.bread/weights
 
-  classes= 8
-  train  = /home/xuan/pos_bread/cfg.breads_fake.tiny/train.txt
-  valid  = /home/xuan/pos_bread/cfg.breads_fake.tiny/test.txt
-  names = /home/xuan/pos_bread/cfg.breads_fake.tiny/obj.names
-  backup = /home/xuan/pos_bread/cfg.breads_fake.tiny/weights/
+obj.names folder 內容：
+（此檔內容為 label 的列表，例如 mature 與 flower，YOLO 在訓練與預測時皆需要讀取此檔。）
 
-obj.names folder內容：
-（此檔內容為label的列表，例如mature與flower，YOLO在訓練與預測時皆需要讀取此檔。）
-
-  b01
-  b02
-  b06
-  b03
-  b05
-  b04
-  b08
-  b07
+b04
+b03
+b01
+b05
+b02
 
 
 
 
 
 
-八）修改yolov3-tiny.cfg或yolov3.cfg （YOLO模型設定檔）
+八）修改 yolov3-tiny.cfg 或 yolov3.cfg 
+（ YOLO模型設定檔）
 
--從Darknet安裝目錄下的cfg資料夾找到需要的YOLO cfg檔(標準或tiny YOLO)，複製到本cfg資料夾。，並視需要修改下列幾行：
+從 Darknet 安裝目錄下的 cfg 資料夾找到需要的 YOLO cfg 檔
+ ( 標準或 tiny YOLO )，複製到本 cfg 資料夾
 
---如果是訓練Tiny YOLO，請複製並修改yolov3-tiny.cfg如下：
+如果是訓練 Tiny YOLO，請複製並修改 yolov3-tiny.cfg 如下：
 
 Line 3: set batch=24   →  using 24 images for every training step
-
 Line 4: set subdivisions=8   →  the batch will be divided by 8
+Line 127: set filters=30   →  in our case filters is (classes + 5)*3
+Line 135: set classes=5   →  the number of categories we want to detect
+Line 171: set filters=30   →  in our case filtersis (classes + 5)*3
+Line 177: set classes=5   →  the number of categories we want to detect
 
-Line 127: set filters=39   →  in our case filters is (classes + 5)*3
 
-Line 135: set classes=8   →  the number of categories we want to detect
-
-Line 171: set filters=39   →  in our case filtersis (classes + 5)*3
-
-Line 177: set classes=8   →  the number of categories we want to detect
-
---如果是訓練YOLO，請複製並修改yolov3.cfg如下：
+如果是訓練 YOLO，請複製並修改 yolov3.cfg 如下：
 
 Line 3: set batch=24 → using 24 images for every training step
-
 Line 4: set subdivisions=8   →  the batch will be divided by 8
-
-Line 603: set filters=39   →  in our case filters is (classes + 5)*3
-
-Line 610: set classes=8   →  the number of categories we want to detect
-
-Line 689: set filters=39   →  in our case filters is (classes + 5)*3
-
-Line 696: set classes=8   →  the number of categories we want to detect
-
-Line 776: set filters=39   →  in our case filters is (classes + 5)*3
-
-Line 783: set classes=2   →  the number of categories we want to detect
+Line 603: set filters=30   →  in our case filters is (classes + 5)*3
+Line 610: set classes=5   →  the number of categories we want to detect
+Line 689: set filters=30   →  in our case filters is (classes + 5)*3
+Line 696: set classes=5   →  the number of categories we want to detect
+Line 776: set filters=30   →  in our case filters is (classes + 5)*3
+Line 783: set classes=5   →  the number of categories we want to detect
 
 
-batch參數是指每批次取幾張圖片進行訓練，subdivisions參數是指要將每批次拆成幾組，以避免GPU memory不夠。
-如果您是使用12G的1080 Ti GPU，建議使用其預設的batch=24、subdivisions=8即可。
+batch 參數是指每批次取幾張圖片進行訓練，subdivisions 參數是指要將每批次拆成幾組，以避免 GPU memory 不夠。
+如果您是使用 12G 的 1080 Ti GPU，建議使用其預設的 batch=24、subdivisions=8 即可。
 
-另外，由於標準YOLO V3有三個detector針對三種scale的feature map，因此要修改三組的filters及classes。
-Tiny YOLO只有兩個detector，因此要修改兩組。
 
-修改完yolov3.cfg or yolov3-tiny.cfg之後，便可開始進行訓練了。
+另外，由於標準 YOLO V3 有三個 detector 針對三種 scale 的 feature map，因此要修改三組的 filters 及 classes
+Tiny YOLO 只有兩個 detector，因此要修改兩組。
+
+修改完 yolov3.cfg or yolov3-tiny.cfg 之後，便可開始進行訓練了。
 
 
 
@@ -374,24 +381,26 @@ Tiny YOLO只有兩個detector，因此要修改兩組。
 
 九）下載預訓練檔
 
--可同時用於訓練YOLO及Tiny YOLO
+可同時用於訓練 YOLO 及 Tiny YOLO
   $ wget https://pjreddie.com/media/files/darknet53.conv.74
 
--Imagent＋COCO datasets所訓練的yolov3.weights
+Imagent + COCO datasets 所訓練的 yolov3.weights
   $ wget https://pjreddie.com/media/files/yolov3.weights
   
--YOLOV3-Tiny weights for CoCo dataset        
+YOLOV3-Tiny weights for CoCo dataset        
   $ wget https://pjreddie.com/media/files/yolov3-tiny.weights
 
 以上選擇其一即可。
 
 
-執行darknet command開始訓練：(根據上面選擇的預訓練檔開始訓練，這邊使用yolov3-tiny.weights)
+執行 darknet command 開始訓練：
+(根據上面選擇的預訓練檔開始訓練，這邊使用 yolov3-tiny.weights )
 
-  $ ./darknet/darknet detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/yolov3-tiny.cfg yolov3-tiny.weights
+  $ ./darknet/darknet detector train cfg.bread/obj.data cfg.bread/yolov3-tiny.cfg yolov3-tiny.weights
 
 
-訓練過程會持續的秀出各種數值，並且每隔100batches會寫出一個weights檔。其log說明如下：
+訓練過程會持續的秀出各種數值，並且每隔 100batches 會寫出一個 weights 檔。其 log 說明如下：
+
 
 Region 16 Avg IOU: 0.211202, Class: 0.617162, Obj: 0.608671, No Obj: 0.523450, .5R: 0.096774, .75R: 0.000000,  count: 31
 Region 23 Avg IOU: 0.205995, Class: 0.557535, Obj: 0.731852, No Obj: 0.513294, .5R: 0.000000, .75R: 0.000000,  count: 3
@@ -413,16 +422,15 @@ Region 23 Avg IOU: 0.125563, Class: 0.637127, Obj: 0.420478, No Obj: 0.513307, .
 Loaded: 0.000044 seconds
 
 
-上面log中：
+上面 log 中：
 
 Region 16, Region 23, 表示不同尺度（16，23）上預測到的不同大小的參數。
-16 卷積層爲最大的預測尺度, 使用較大的 mask, 但是可以預測出較小的物體;
-23卷積層爲最小的預測尺度, 使用較小的 mask, 可以預測出較大的物體.
+16 卷積層爲最大的預測尺度, 使用較大的 mask, 可以預測出較小的物體，23卷積層爲最小的預測尺度, 使用較小的 mask, 可以預測出較大的物體。
 
-表示所有訓練圖片中的一個批次（batch）,批次大小的劃分根據在 cfg.breads_fake.tiny/yolov3-voc.cfg中設定的， 
-批次大小的劃分根據我們在 .cfg 文件中設置的subdivisions參數。
-在我使用的 .cfg 文件中 batch = 64 ，subdivision = 8，所以在訓練輸出中，
-訓練迭代包含了8組（8組Region 16, Region 23），每組又包含了8張圖片，跟設定的batch和subdivision的值一致。
+表示所有訓練圖片中的一個批次（batch）,批次大小的劃分根據在 cfg.bread/yolov3-tiny.cfg 中設定的， 
+批次大小的劃分根據我們在 .cfg 文件中設置的 subdivisions 參數。
+在我使用的 .cfg 文件中 batch = 24 ，subdivision = 8，所以在訓練輸出中，
+訓練迭代包含了8 組（8 組Region 16, Region 23），每組又包含了8張圖片，跟設定的 batch 和 subdivision 的值一致。
 注： 也就是說每輪迭代會從所有訓練集裏隨機抽取 batch = 24 個樣本參與訓練，
 所有這些 batch 個樣本又被均分爲 subdivision = 8 次送入網絡參與訓練，以減輕內存佔用的壓力）
 
@@ -438,7 +446,7 @@ Region 16, Region 23, 表示不同尺度（16，23）上預測到的不同大小
       是總體的Loss(損失）
     
     410.825806 avg：
-      是平均Loss，這個數值應該越低越好，一般來說，一旦這個數值低於0.060730 avg就可以終止訓練了。
+      是平均 Loss，這個數值應該越低越好，一般來說，一旦這個數值低於0.060730 avg就可以終止訓練了。
     
     0.000000 rate：
       代表當前的學習率，是在.cfg文件中定義的。
@@ -447,7 +455,7 @@ Region 16, Region 23, 表示不同尺度（16，23）上預測到的不同大小
       表示當前批次訓練花費的總時間。
     
     24 images：
-      這一行最後的這個數值是1*24的大小，表示到目前爲止，參與訓練的圖片的總量。
+      這一行最後的這個數值是 1*24 的大小，表示到目前爲止，參與訓練的圖片的總量。
 
 
 分塊輸出：
@@ -457,34 +465,35 @@ Region 16, Region 23, 表示不同尺度（16，23）上預測到的不同大小
     Region xx ：
       表示cfg文件中golo-layer的索引
     
-    Avg IOU: 0.125563： 
-      表示在當前subdivision內的圖片的平均IOU，代表預測的矩形框和真實目標的交集與並集之比，這裏是12.56%，這個模型需要進一步的訓練
+    Avg IOU : 0.125563： 
+      表示在當前 subdivision 內的圖片的平均 IOU，代表預測的矩形框和真實目標的交集與並集之比，這裏是 12.56%，這個模型需要進一步的訓練
     
     Class: 0.637127： 
       標註物體分類的正確率，期望該值趨近於1
     
     Obj: 0.420478： 
-      越接近1越好
+      越接近 1 越好
     
     No Obj: 0.513307：
       期望該值越來越小，但不爲零
     
     .5R  
-      以IOU = 0.5為閾值時候的recall
+      以IOU = 0.5 為閾值時候的 recall
     
     .75R
-      以IOU = 0.75為閾值時候的recall
+      以IOU = 0.75 為閾值時候的 recall
     
     count: 15：
-      count後的值是所有的當前subdivision圖片中包含正樣本的圖片的數量
+      count 後的值是所有的當前 subdivision 圖片中包含正樣本的圖片的數量
 
-    ** IOU（Intersection over Union，也被稱爲交併集之比）
+    ** IOU（ Intersection over Union，也被稱爲交併集之比）
 
 
-一般來說，最需要注意的是average loss error，如果訓練的圖片數目有數千個以上，那麼average loss error約0.06左右便可手動停止了，
-如果僅有數百張，那麼大約0.6左右便可先試著載入其weights檔測試看看辨識效果是否滿意。
+一般來說，最需要注意的是 average loss error，如果訓練的圖片數目有數千個以上，那麼 average loss error 約0.06左右便可手動停止了，
+如果僅有數百張，那麼大約 0.6 左右便可先試著載入其 weights 檔測試看看辨識效果是否滿意。
 
-YOLO在訓練過程中每訓練100 batches便會寫入一個新的weights檔到目錄中，我們可以隨時取用以檢視目前的訓練成果。
+YOLO在訓練過程中每訓練 100 batches 便會寫入一個新的 weights 檔到目錄中，我們可以隨時取用以檢視目前的訓練成果。
+
 
 
 
@@ -493,13 +502,56 @@ YOLO在訓練過程中每訓練100 batches便會寫入一個新的weights檔到�
 
 十）檢視訓練成果
 
-找一張圖片，然後使用下列的Darknet command來測試。（權重後面放修改成要測試的相片路徑，僅供參考）
+找一張圖片，然後使用下列的 Darknet command 來測試。（權重後面放修改成要測試的相片路徑，僅供參考）
 
-  $ ./darknet/darknet detector test cfg.bread/obj.data cfg.bread/weights/yolov3-tiny_100000.weights /home/xuan/pos_bread/breads_modle/959d9920b93a95e9-photo-full.jpg
-  $ ./darknet/darknet detector test cfg.bread/obj.data cfg.bread/yolov3-tiny.cfg cfg.bread/yolov3-tiny_final.weights /home/xuan/bread_test/yolo/IMG_4647.jpg
-
+  $ ./darknet/darknet detector test cfg.bread/obj.data cfg.bread/yolov3-tiny.cfg /home/xuan/bread_test/cfg.bread/weights/yolov3-tiny_final.weights /home/xuan/bread_test/yolo/IMG_4644.jpg
 
 
 
 
-完成啦～
+
+
+
+Done ! ! 
+© 2020 GitHub, Inc. 
+-Xuan 
+
+
+
+
+
+
+
+# python3 dmesg image
+
+IndentationError: unexpected indent
+縮排問題
+
+SyntaxError: 'break' outside loop
+break 只能在 for 和 while 循環中使用
+
+IndentationError: expected an indented block
+說明此處需要縮進，只要在出現錯誤的那一行，按 空格 或 Tab（但不能混用）
+
+#  dmesg 
+
+執行darknet開始訓練：
+darknet/darknet detector train cfg.breads_fake /yolov3-tiny.cfg yolov3-tiny.conv.15  (產生 Segmentation fault (core dumped) 的問題 )
+
+解決辦法：
+$ ./darknet_fix detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/yolov3-tiny.cfg yolov3-tiny.conv.15
+（缺少參數 cfg.breads_fake.tiny/obj.data）
+
+
+執行 ./darknet_fix detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/yolov3-tiny.cfg yolov3-tiny.conv.15 後
+產生 Couldn't open file: /home/xuan/pos_bread/breads_modle/.txt 的問題。
+
+修改  /home/xuan/pos_bread/breads_modle/.txt 路徑即可 （路徑在 2_split_train_test.py 的 imageFolder）
+
+
+
+
+
+
+
+...
