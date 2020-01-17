@@ -555,3 +555,4 @@ $ ./darknet_fix detector train cfg.breads_fake.tiny/obj.data cfg.breads_fake.tin
 
 
 ...
+-Xuan
