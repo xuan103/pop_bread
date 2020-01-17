@@ -495,8 +495,8 @@ YOLO在訓練過程中每訓練100 batches便會寫入一個新的weights檔到�
 
 找一張圖片，然後使用下列的Darknet command來測試。（權重後面放修改成要測試的相片路徑，僅供參考）
 
-  $./darknet/darknet detector cfg.breads_fake.tiny/obj.data cfg.breads_fake.tiny/weights/yolov3-tiny_100000.weights /home/xuan/pos_bread/breads_modle/959d9920b93a95e9-photo-full.jpg
-
+  $ ./darknet/darknet detector test cfg.bread/obj.data cfg.bread/weights/yolov3-tiny_100000.weights /home/xuan/pos_bread/breads_modle/959d9920b93a95e9-photo-full.jpg
+  $ ./darknet/darknet detector test cfg.bread/obj.data cfg.bread/yolov3-tiny.cfg cfg.bread/yolov3-tiny_final.weights /home/xuan/bread_test/yolo/IMG_4647.jpg
 
 
 
