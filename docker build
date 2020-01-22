@@ -1,0 +1,10 @@
+
+build:
+
+  $ docker build -t aggresss/opencv-python /home/sdd-2/xuandocker
+
+
+run:
+
+  $ docker run -it --rm --ipc=host --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 -v $PWD://work/model/ xuandocker bash
+  
